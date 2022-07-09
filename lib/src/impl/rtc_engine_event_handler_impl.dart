@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:agora_rtc_engine/src/classes.dart';
 import 'package:agora_rtc_engine/src/rtc_engine_event_handler.dart';
+import 'package:flutter/foundation.dart';
 
 import 'enum_converter.dart';
 import 'event_handler_json.dart';
@@ -16,7 +17,12 @@ extension RtcEngineEventHandlerExt on RtcEngineEventHandler {
     if (methodName.startsWith('on')) {
       methodName = methodName.substring(2);
     }
-
+    debugPrint('RtcEngineEventHandlerExt $methodName ');
+    if(methodName == 'RecordFrameEvent'){
+      final dataMap = data as Map;
+      recordFrameCallback?.call(dataMap[0], dataMap[1], dataMap[2], dataMap[3], dataMap[4]);
+      return;
+    }
     final dataMap = jsonDecode(data as String);
     newData = List<dynamic>.from(Map<String, dynamic>.from(dataMap).values);
     switch (methodName) {
@@ -491,7 +497,6 @@ extension RtcEngineEventHandlerExt on RtcEngineEventHandler {
           contentInspectResult!(json.result);
         }
         break;
-
       default:
         // do nothing
         break;

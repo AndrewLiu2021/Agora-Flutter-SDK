@@ -1,3 +1,5 @@
+package android
+
 group 'io.agora.agora_rtc_engine'
 version '1.0-SNAPSHOT'
 
@@ -12,9 +14,11 @@ buildscript {
   repositories {
     mavenCentral()
     google()
+    jcenter()
   }
 
   dependencies {
+    classpath 'com.android.tools.build:gradle:3.5.0'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
@@ -23,6 +27,7 @@ rootProject.allprojects {
   repositories {
     mavenCentral()
     google()
+    jcenter()
   }
 }
 
@@ -33,7 +38,7 @@ android {
   compileSdkVersion safeExtGet('compileSdkVersion', 31)
 
   defaultConfig {
-    minSdkVersion safeExtGet('minSdkVersion', 16)
+    minSdkVersion safeExtGet('minSdkVersion', 21)
 
     consumerProguardFiles 'consumer-rules.pro'
   }

@@ -50,7 +50,6 @@ class AgoraRtcChannelPlugin(
 
     callApiMethodCallHandler = ApiTypeChannelCallApiMethodCallHandler(irisRtcEngine)
 
-
   }
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {

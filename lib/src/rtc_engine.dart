@@ -2306,4 +2306,7 @@ abstract class RtcEngine {
 
   /// @nodoc
   Future<void> enableWirelessAccelerate(bool enabled);
+
+  Future<void> openEncodeData(bool openEncodeData);
+
 }

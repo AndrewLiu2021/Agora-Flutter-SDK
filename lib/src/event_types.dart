@@ -209,3 +209,7 @@ typedef OnRecorderStateChanged = void Function(
     RecorderState state, RecorderErrorCode error);
 
 typedef OnRecorderInfoUpdated = void Function(RecorderInfo info);
+
+//获得录制的声音
+typedef RecordFrameCallback = void Function(Uint8List bytes, int numOfSamples,
+    int bytesPerSample, int channels, int samplesPerSec);

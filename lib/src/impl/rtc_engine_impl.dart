@@ -2001,4 +2001,10 @@ class RtcEngineImpl with MediaRecorderImplMixin implements RtcEngine {
       }),
     });
   }
+
+  @override
+  Future<void> openEncodeData(bool openEncodeData) {
+    return _invokeMethod('openEncodeData', {'openEncodeData': openEncodeData});
+  }
+
 }

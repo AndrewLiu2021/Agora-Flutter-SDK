@@ -5,9 +5,17 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
+import com.huawei.multimedia.audiokit.utils.LogUtils
+import io.agora.agora_rtc_engine.ADTSUtils.bytebuffer2ByteArray
 import io.agora.iris.base.IrisEventHandler
 import io.agora.iris.rtc.IrisRtcEngine
+import io.agora.rtc.AudioFrame
+import io.agora.rtc.IAudioFrameObserver
+import io.agora.rtc.IAudioFrameObserver.POSITION_RECORD
 import io.agora.rtc.RtcEngine
+import io.agora.rtc.audio.AudioParams
+import io.agora.rtc.base.AudioRecordUtil
+import io.agora.rtc.base.RtcEnginePlugin
 import io.agora.rtc.base.RtcEngineRegistry
 import io.flutter.BuildConfig
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -16,6 +24,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.flutter.plugin.platform.PlatformViewRegistry
+import java.util.HashMap
 import kotlin.math.abs
 
 internal class EventHandler(private val eventSink: EventChannel.EventSink?) : IrisEventHandler {
@@ -33,8 +42,12 @@ internal class EventHandler(private val eventSink: EventChannel.EventSink?) : Ir
   }
 }
 
+interface OpenEncodeDataListener {
+  fun openEncodeData(boolean: Boolean)
+}
+
 open class CallApiMethodCallHandler(
-  protected val irisRtcEngine: IrisRtcEngine
+  protected val irisRtcEngine: IrisRtcEngine,
 ) : MethodCallHandler {
 
   protected open fun callApi(apiType: Int, params: String?, sb: StringBuffer): Int {
@@ -143,6 +156,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   private val handler = Handler(Looper.getMainLooper())
   private lateinit var rtcChannelPlugin: AgoraRtcChannelPlugin;// = AgoraRtcChannelPlugin(irisRtcEngine)
   private lateinit var callApiMethodCallHandler: CallApiMethodCallHandler
+  private var _openEncodeData = false
 
   // This static function is optional and equivalent to onAttachedToEngine. It supports the old
   // pre-Flutter-1.12 Android projects. You are encouraged to continue supporting
@@ -169,13 +183,13 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
     binaryMessenger: BinaryMessenger,
     platformViewRegistry: PlatformViewRegistry
   ) {
+    Log.e("Agora","initPlugin")
     applicationContext = context.applicationContext
     irisRtcEngine = IrisRtcEngine(applicationContext)
     methodChannel = MethodChannel(binaryMessenger, "agora_rtc_engine")
     methodChannel.setMethodCallHandler(this)
     eventChannel = EventChannel(binaryMessenger, "agora_rtc_engine/events")
     eventChannel.setStreamHandler(this)
-
     callApiMethodCallHandler = CallApiMethodCallHandler(irisRtcEngine)
 
     platformViewRegistry.registerViewFactory(
@@ -188,8 +202,98 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
     )
 
     rtcChannelPlugin = AgoraRtcChannelPlugin(irisRtcEngine)
+
     rtcChannelPlugin.initPlugin(binaryMessenger)
+    RtcEnginePlugin.Registrant.register(_etcEnginePlugin)
   }
+
+
+
+  var audioFrameObserver = false
+  private val listener = object : EncoderListener {
+    override fun encodeAAC(data: HashMap<String, Any>) {
+      Log.d("charco","encodeAAC ${data.size}")
+      handler.post {
+        eventSink?.success(mapOf<String, Any>("methodName" to "RecordFrameEvent", "data" to data))
+      }
+    }
+  }
+
+  private  val _etcEnginePlugin : RtcEnginePlugin  =  object : RtcEnginePlugin {
+    override fun onRtcEngineCreated(rtcEngine: RtcEngine?) {
+      if(audioFrameObserver){
+        return
+      }
+      audioFrameObserver = true;
+      val registerAudioFrameObserver = rtcEngine?.registerAudioFrameObserver(mAudioFrameObserver)
+      Log.d("charco","registerAudioFrameObserver $registerAudioFrameObserver $rtcEngine")
+    }
+
+    override fun onRtcEngineDestroyed() {}
+  }
+
+  //flutter 不支持 https://github.com/AgoraIO/Flutter-SDK/issues/141
+  private val mAudioFrameObserver: IAudioFrameObserver = object : IAudioFrameObserver {
+
+    override fun onRecordFrame(audioFrame: AudioFrame?): Boolean {
+      if(_openEncodeData && audioFrame != null){
+        val byteArray = bytebuffer2ByteArray(audioFrame.samples)
+        AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
+      }
+      Log.e("charco","onRecordFrame, audioFrame?.samples?.hasArray() ${audioFrame?.samples?.hasArray()} audioFrame.numOfSamples ${audioFrame?.numOfSamples},audioFrame.bytesPerSample ${audioFrame?.bytesPerSample},audioFrame.channels  ${audioFrame?.channels}, audioFrame?.samplesPerSec ${audioFrame?.samplesPerSec} ")
+      return true
+    }
+
+    override fun onPlaybackFrame(audioFrame: AudioFrame?): Boolean {
+      Log.e("charco","onPlaybackFrame")
+      return false
+    }
+
+    override fun onPlaybackFrameBeforeMixing(audioFrame: AudioFrame?, uid: Int): Boolean {
+      Log.e("charco","onPlaybackFrameBeforeMixing")
+      return false
+    }
+
+    override fun onMixedFrame(audioFrame: AudioFrame?): Boolean {
+      Log.e("charco","onMixedFrame")
+      return false
+    }
+
+    override fun isMultipleChannelFrameWanted(): Boolean {
+      Log.e("charco","isMultipleChannelFrameWanted")
+      return false
+    }
+
+    override fun onPlaybackFrameBeforeMixingEx(
+      audioFrame: AudioFrame?,
+      uid: Int,
+      channelId: String?
+    ): Boolean {
+      Log.e("charco","onPlaybackFrameBeforeMixingEx")
+      return false
+    }
+
+    override fun getObservedAudioFramePosition(): Int {
+      return POSITION_RECORD
+    }
+
+    override fun getRecordAudioParams(): AudioParams {
+      Log.e("charco","getRecordAudioParams")
+      return AudioParams(32000,1,0,1024)
+    }
+
+    override fun getPlaybackAudioParams(): AudioParams {
+      Log.e("charco","getPlaybackAudioParams")
+      return AudioParams(32000,1,0,1024)
+    }
+
+    override fun getMixedAudioParams(): AudioParams {
+      Log.e("charco","getMixedAudioParams")
+      return AudioParams(32000,1,0,1024)
+    }
+
+  }
+
 
   override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     this.binding = binding
@@ -239,6 +343,12 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
         }
         "getAssetAbsolutePath" -> {
           getAssetAbsolutePath(call, result)
+          return
+        }
+        "openEncodeData" ->{
+          val boolean = call.argument<Boolean>("openEncodeData")
+          if(boolean != null)
+          _openEncodeData = boolean
           return
         }
         else -> {
