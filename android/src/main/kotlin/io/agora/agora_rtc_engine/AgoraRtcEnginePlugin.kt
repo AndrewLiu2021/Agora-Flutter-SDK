@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
-import com.huawei.multimedia.audiokit.utils.LogUtils
 import io.agora.agora_rtc_engine.ADTSUtils.bytebuffer2ByteArray
 import io.agora.iris.base.IrisEventHandler
 import io.agora.iris.rtc.IrisRtcEngine
@@ -14,7 +13,6 @@ import io.agora.rtc.IAudioFrameObserver
 import io.agora.rtc.IAudioFrameObserver.POSITION_RECORD
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.audio.AudioParams
-import io.agora.rtc.base.AudioRecordUtil
 import io.agora.rtc.base.RtcEnginePlugin
 import io.agora.rtc.base.RtcEngineRegistry
 import io.flutter.BuildConfig
@@ -246,7 +244,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
 
     override fun onPlaybackFrame(audioFrame: AudioFrame?): Boolean {
       Log.e("charco","onPlaybackFrame")
-      return false
+      return true
     }
 
     override fun onPlaybackFrameBeforeMixing(audioFrame: AudioFrame?, uid: Int): Boolean {

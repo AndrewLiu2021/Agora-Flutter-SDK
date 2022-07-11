@@ -1,4 +1,4 @@
-package io.agora.agora_rtc_engine
+package io.agora.agora_rtc_engine;
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo

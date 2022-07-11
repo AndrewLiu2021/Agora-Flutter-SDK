@@ -1,5 +1,3 @@
-package android
-
 group 'io.agora.agora_rtc_engine'
 version '1.0-SNAPSHOT'
 

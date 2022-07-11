@@ -1,4 +1,4 @@
-package android.src.main.kotlin.io.agora.agora_rtc_engine;
+package io.agora.agora_rtc_engine;
 
 import android.util.SparseIntArray;
 

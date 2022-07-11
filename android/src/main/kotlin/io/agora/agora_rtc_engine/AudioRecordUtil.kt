@@ -1,12 +1,4 @@
-package io.agora.rtc.base
-
-import android.os.Environment
-import android.util.Log
-import io.agora.agora_rtc_engine.EncoderListener
-import io.agora.agora_rtc_engine.PCMEncoderAAC
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
+package io.agora.agora_rtc_engine;
 
 /**
  * @author dashu
