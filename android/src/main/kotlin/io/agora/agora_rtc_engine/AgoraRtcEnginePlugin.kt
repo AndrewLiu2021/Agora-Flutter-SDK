@@ -18,6 +18,7 @@ import io.flutter.BuildConfig
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.flutter.plugin.platform.PlatformViewRegistry
 import kotlin.math.abs
@@ -238,11 +239,11 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       }
 
       Log.e("charco","onRecordFrame, " +
-        "audioFrame?.samples?.hasArray() ${audioFrame?.samples?.hasArray()} " +
-        "audioFrame.numOfSamples ${audioFrame?.numOfSamples}," +
-        "audioFrame.bytesPerSample ${audioFrame?.bytesPerSample}," +
-        "audioFrame.channels  ${audioFrame?.channels}, " +
-        "audioFrame?.samplesPerSec ${audioFrame?.samplesPerSec} ")
+        "audioFrame?.samples?.hasArray() = ${audioFrame?.samples?.hasArray()} " +
+        "audioFrame.numOfSamples  =  ${audioFrame?.numOfSamples}," +
+        "audioFrame.bytesPerSample =  ${audioFrame?.bytesPerSample}," +
+        "audioFrame.channels  =  ${audioFrame?.channels}, " +
+        "audioFrame?.samplesPerSec  =  ${audioFrame?.samplesPerSec} ")
       return true
     }
 
