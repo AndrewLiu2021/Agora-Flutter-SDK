@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
-import io.agora.agora_rtc_engine.ADTSUtils.bytebuffer2ByteArray
 import io.agora.iris.base.IrisEventHandler
 import io.agora.iris.rtc.IrisRtcEngine
 import io.agora.rtc.AudioFrame
@@ -19,11 +18,10 @@ import io.flutter.BuildConfig
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.flutter.plugin.platform.PlatformViewRegistry
-import java.util.HashMap
 import kotlin.math.abs
+
 
 internal class EventHandler(private val eventSink: EventChannel.EventSink?) : IrisEventHandler {
   private val handler = Handler(Looper.getMainLooper())
@@ -150,7 +148,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   private lateinit var eventChannel: EventChannel
 
   private var eventSink: EventChannel.EventSink? = null
-//  private val managerAgoraTextureView = RtcEngineManager { methodName, data -> emit(methodName, data) }
+  //  private val managerAgoraTextureView = RtcEngineManager { methodName, data -> emit(methodName, data) }
   private val handler = Handler(Looper.getMainLooper())
   private lateinit var rtcChannelPlugin: AgoraRtcChannelPlugin;// = AgoraRtcChannelPlugin(irisRtcEngine)
   private lateinit var callApiMethodCallHandler: CallApiMethodCallHandler
@@ -235,16 +233,22 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
 
     override fun onRecordFrame(audioFrame: AudioFrame?): Boolean {
       if(_openEncodeData && audioFrame != null){
-        val byteArray = bytebuffer2ByteArray(audioFrame.samples)
-        AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
+//        val byteArray = bytebuffer2ByteArray(audioFrame.samples)
+//        AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
       }
-      Log.e("charco","onRecordFrame, audioFrame?.samples?.hasArray() ${audioFrame?.samples?.hasArray()} audioFrame.numOfSamples ${audioFrame?.numOfSamples},audioFrame.bytesPerSample ${audioFrame?.bytesPerSample},audioFrame.channels  ${audioFrame?.channels}, audioFrame?.samplesPerSec ${audioFrame?.samplesPerSec} ")
+
+      Log.e("charco","onRecordFrame, " +
+        "audioFrame?.samples?.hasArray() ${audioFrame?.samples?.hasArray()} " +
+        "audioFrame.numOfSamples ${audioFrame?.numOfSamples}," +
+        "audioFrame.bytesPerSample ${audioFrame?.bytesPerSample}," +
+        "audioFrame.channels  ${audioFrame?.channels}, " +
+        "audioFrame?.samplesPerSec ${audioFrame?.samplesPerSec} ")
       return true
     }
 
     override fun onPlaybackFrame(audioFrame: AudioFrame?): Boolean {
       Log.e("charco","onPlaybackFrame")
-      return true
+      return false
     }
 
     override fun onPlaybackFrameBeforeMixing(audioFrame: AudioFrame?, uid: Int): Boolean {
@@ -331,27 +335,27 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
 
     // Iris supported
     when (call.method) {
-        "createTextureRender" -> {
-          result.notImplemented()
-          return
-        }
-        "destroyTextureRender" -> {
-          result.notImplemented()
-          return
-        }
-        "getAssetAbsolutePath" -> {
-          getAssetAbsolutePath(call, result)
-          return
-        }
-        "openEncodeData" ->{
-          val boolean = call.argument<Boolean>("openEncodeData")
-          if(boolean != null)
+      "createTextureRender" -> {
+        result.notImplemented()
+        return
+      }
+      "destroyTextureRender" -> {
+        result.notImplemented()
+        return
+      }
+      "getAssetAbsolutePath" -> {
+        getAssetAbsolutePath(call, result)
+        return
+      }
+      "openEncodeData" ->{
+        val boolean = call.argument<Boolean>("openEncodeData")
+        if(boolean != null)
           _openEncodeData = boolean
-          return
-        }
-        else -> {
-          callApiMethodCallHandler.onMethodCall(call, result)
-        }
+        return
+      }
+      else -> {
+        callApiMethodCallHandler.onMethodCall(call, result)
+      }
     }
 
   }
