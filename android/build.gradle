@@ -6,8 +6,8 @@ def safeExtGet(prop, fallback) {
 }
 
 buildscript {
-  ext.agora_rtc_engine_kt_version = '1.5.31'
-  def kotlin_version = rootProject.ext.has('kotlin_version') ? rootProject.ext.get('kotlin_version') : "$agora_rtc_engine_kt_version"
+  ext.kotlin_version = '1.5.31'
+  def kotlin_version = rootProject.ext.has('kotlin_version') ? rootProject.ext.get('kotlin_version') : "$kotlin_version"
 
   repositories {
     mavenCentral()
@@ -57,7 +57,7 @@ dependencies {
     api 'io.agora.rtc:iris-rtc:3.6.2-fix.1'
   }
 
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${safeExtGet('kotlin_version', "$agora_rtc_engine_kt_version")}"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 static boolean isDev(Project project) {
