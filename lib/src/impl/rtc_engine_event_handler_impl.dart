@@ -19,7 +19,7 @@ extension RtcEngineEventHandlerExt on RtcEngineEventHandler {
     }
     debugPrint('RtcEngineEventHandlerExt $methodName ');
     if(methodName == 'RecordFrameEvent'){
-      final dataMap = data as Map;
+      final dataMap = data as List<dynamic>;
       recordFrameCallback?.call(dataMap[0], dataMap[1], dataMap[2], dataMap[3], dataMap[4]);
       return;
     }
@@ -43,8 +43,7 @@ extension RtcEngineEventHandlerExt on RtcEngineEventHandler {
         rejoinChannelSuccess?.call(newData[0], newData[1], newData[2]);
         break;
       case 'LeaveChannel':
-        leaveChannel
-            ?.call(RtcStats.fromJson(Map<String, dynamic>.from(newData[0])));
+        leaveChannel?.call(RtcStats.fromJson(Map<String, dynamic>.from(newData[0])));
         break;
       case 'LocalUserRegistered':
         localUserRegistered?.call(newData[0], newData[1]);

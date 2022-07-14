@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
+import io.agora.agora_rtc_engine.ADTSUtils.bytebuffer2ByteArray
 import io.agora.iris.base.IrisEventHandler
 import io.agora.iris.rtc.IrisRtcEngine
 import io.agora.rtc.AudioFrame
@@ -208,10 +209,10 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
 
   var audioFrameObserver = false
   private val listener = object : EncoderListener {
-    override fun encodeAAC(data: HashMap<String, Any>) {
-      Log.d("charco","encodeAAC ${data.size}")
+    override fun encodeAAC(data: List<Any>) {
+//      Log.d("charco","encodeAAC ${data.size}")
       handler.post {
-        eventSink?.success(mapOf<String, Any>("methodName" to "RecordFrameEvent", "data" to data))
+        eventSink?.success(mapOf("methodName" to "RecordFrameEvent", "data" to data))
       }
     }
   }
@@ -233,17 +234,17 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   private val mAudioFrameObserver: IAudioFrameObserver = object : IAudioFrameObserver {
 
     override fun onRecordFrame(audioFrame: AudioFrame?): Boolean {
-      if(_openEncodeData && audioFrame != null){
-//        val byteArray = bytebuffer2ByteArray(audioFrame.samples)
-//        AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
+      if( _openEncodeData &&  audioFrame != null){
+        val byteArray = bytebuffer2ByteArray(audioFrame.samples)
+        AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
       }
 
-      Log.e("charco","onRecordFrame, " +
-        "audioFrame?.samples?.hasArray() = ${audioFrame?.samples?.hasArray()} " +
-        "audioFrame.numOfSamples  =  ${audioFrame?.numOfSamples}," +
-        "audioFrame.bytesPerSample =  ${audioFrame?.bytesPerSample}," +
-        "audioFrame.channels  =  ${audioFrame?.channels}, " +
-        "audioFrame?.samplesPerSec  =  ${audioFrame?.samplesPerSec} ")
+//      Log.e("charco","onRecordFrame, " +
+//        "audioFrame?.samples?.hasArray() = ${audioFrame?.samples?.hasArray()} " +
+//        "audioFrame.numOfSamples  =  ${audioFrame?.numOfSamples}," +
+//        "audioFrame.bytesPerSample =  ${audioFrame?.bytesPerSample}," +
+//        "audioFrame.channels  =  ${audioFrame?.channels}, " +
+//        "audioFrame?.samplesPerSec  =  ${audioFrame?.samplesPerSec} ")
       return true
     }
 

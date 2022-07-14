@@ -53,16 +53,16 @@ class ADTSUtils {
     }
 
   public static byte[] bytebuffer2ByteArray(ByteBuffer buffer) {
+
     //重置 limit 和postion 值
-    buffer.flip();
+    //buffer.flip();
     //获取buffer中有效大小
     int len=buffer.limit() - buffer.position();
 
-    byte [] bytes=new byte[len];
+    byte [] bytes= new byte[len];
 
     for (int i = 0; i < bytes.length; i++) {
       bytes[i]=buffer.get();
-
     }
 
     return bytes;

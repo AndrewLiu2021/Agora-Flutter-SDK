@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine_example/config/agora.config.dart' as config;
 import 'package:flutter/foundation.dart';
@@ -70,6 +72,10 @@ class _State extends State<JoinChannelAudio> {
           isJoined = false;
         });
       },
+      recordFrameCallback:(Uint8List bytes, int numOfSamples,
+          int bytesPerSample, int channels, int samplesPerSec){
+        logSink.log('recordFrameCallback ${bytes.length}');
+      }
     ));
   }
 

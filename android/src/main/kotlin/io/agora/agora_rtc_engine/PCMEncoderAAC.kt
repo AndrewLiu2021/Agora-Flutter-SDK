@@ -117,7 +117,6 @@ class PCMEncoderAAC {
                  */outPutBuf[aacData, 7, byteBufSize]
                 outPutBuf.position(encodeBufferInfo.offset)
 
-                val hashMap = HashMap<String, Any>()
                 val list = mutableListOf<Any>()
                 //该帧的采样数据
                 list.add(aacData)
@@ -129,9 +128,9 @@ class PCMEncoderAAC {
                 list.add(channels)
                 //每声道每秒的采样点数
                 list.add(samplesPerSec)
-                hashMap["data"] = list
                 //编码成功
-                encoderListener.encodeAAC(hashMap)
+//                Log.d("charco","aacData ${aacData.size}");
+                encoderListener.encodeAAC(list)
 
                 //释放
                 mediaCodec.releaseOutputBuffer(outputIndex, false)
@@ -143,5 +142,5 @@ class PCMEncoderAAC {
 }
 
 interface EncoderListener {
-    fun encodeAAC(data: HashMap<String, Any>)
+    fun encodeAAC(data: List<Any>)
 }
