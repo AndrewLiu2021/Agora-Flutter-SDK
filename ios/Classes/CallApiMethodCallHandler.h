@@ -16,6 +16,9 @@
 - (int)callApiWithBuffer:(NSNumber *) apiType _:(NSString *)params _:(void *)buffer _:(char *) result;
 
 - (NSString *)callApiError:(int)ret;
+
+@property(nonatomic, copy) void (^emitter)(NSString *methodName, NSDictionary<NSString*, id> *data);
+
 @end
 
 #endif /* CallApiMethodCallHandler_h */
