@@ -2,9 +2,12 @@
 #import "CallApiMethodCallHandler.h"
 #import <AgoraRtcWrapper/iris_rtc_engine.h>
 #import "Base/RtcEngineRegistry.h"
+#import "AudioMonitorManager.h"
 
 @interface CallApiMethodCallHandler ()
 @property(nonatomic) agora::iris::rtc::IrisRtcEngine *irisRtcEngine;
+
+//@property(nonatomic) RtcEngineManager *manager;
 @end
 
 @implementation CallApiMethodCallHandler
@@ -43,6 +46,10 @@
                     message:des
                     details:nil]);
         }
+    } else if ([@"openEncodeData" isEqualToString:call.method]) {
+        NSDictionary<NSString *, id> *arguments = call.arguments;
+        BOOL openEncodeData = [arguments[@"openEncodeData"] boolValue];
+        [AudioMonitorManager shared].openEncodeData = openEncodeData;
     } else {
       result(FlutterMethodNotImplemented);
     }
@@ -58,6 +65,17 @@
      if (apiTypeEngine == ApiTypeEngine::kEngineRelease) {
          [[RtcEngineRegistry shared] onRtcEngineDestroyed];
      }
+    
+    if (apiTypeEngine == ApiTypeEngine::kEngineJoinChannel) {
+        if ([AudioMonitorManager shared].openEncodeData == YES) {
+            [[AudioMonitorManager shared] setupRawPlugin: (__bridge AgoraRtcEngineKit *)self.irisRtcEngine->rtc_engine()];
+            [AudioMonitorManager shared].emitter = _emitter;
+        }
+    }
+    
+    if (apiTypeEngine == ApiTypeEngine::kEngineLeaveChannel) {
+        [AudioMonitorManager shared].agoraMediaDataPlugin.audioDelegate = nil;
+    }
     
     return ret;
     

@@ -46,7 +46,6 @@ private:
 };
 
 @interface FlutterIrisEventHandler ()
-@property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) agora::iris::rtc::IrisRtcEngine *irisRtcEngine;
 @property(nonatomic) agora::iris::rtc::IrisRtcEngine *irisRtcEngineSub;
 @property(nonatomic) EventHandler *eventHandler;
