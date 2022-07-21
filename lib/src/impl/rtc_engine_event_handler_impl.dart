@@ -17,7 +17,7 @@ extension RtcEngineEventHandlerExt on RtcEngineEventHandler {
     if (methodName.startsWith('on')) {
       methodName = methodName.substring(2);
     }
-    debugPrint('RtcEngineEventHandlerExt $methodName ');
+    // debugPrint('RtcEngineEventHandlerExt $methodName ');
     if(methodName == 'RecordFrameEvent'){
       final dataMap = data as List<dynamic>;
       recordFrameCallback?.call(dataMap[0], dataMap[1], dataMap[2], dataMap[3], dataMap[4]);

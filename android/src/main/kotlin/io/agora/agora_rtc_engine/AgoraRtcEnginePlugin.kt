@@ -351,8 +351,11 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       }
       "openEncodeData" ->{
         val boolean = call.argument<Boolean>("openEncodeData")
-        if(boolean != null)
+        if(boolean != null){
           _openEncodeData = boolean
+          Log.d("charco","_openEncodeData $_openEncodeData ");
+        }
+
         return
       }
       else -> {
