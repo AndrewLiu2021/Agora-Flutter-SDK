@@ -49,6 +49,15 @@
     
     instance.flutterIrisEventHandler = [[FlutterIrisEventHandler alloc] initWith:instance.irisRtcEngine];
     
+    __weak FlutterIrisEventHandler *weakFlutterIrisEventHandler = instance.flutterIrisEventHandler;
+    instance.callApiMethodCallHandler.emitter = ^(NSString *methodName, NSDictionary<NSString *,id> *data) {
+        NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:@{@"methodName": methodName}];
+        if (data) {
+            [event addEntriesFromDictionary:data];
+        }
+        weakFlutterIrisEventHandler.eventSink(event);
+    };
+    
     [eventChannel setStreamHandler:instance.flutterIrisEventHandler];
     
     instance.agoraRtcChannelPlugin = [[AgoraRtcChannelPlugin alloc] initWith:[instance irisRtcEngine] binaryMessenger:[registrar messenger]];
@@ -60,8 +69,6 @@
                                        initWith:[registrar messenger]
                                          engine:instance.irisRtcEngine]
                             withId:@"AgoraSurfaceView"];
-   SwiftTest *_swiftTest = [[SwiftTest alloc] init];
-   [_swiftTest test];
 }
 
 - (instancetype)init {

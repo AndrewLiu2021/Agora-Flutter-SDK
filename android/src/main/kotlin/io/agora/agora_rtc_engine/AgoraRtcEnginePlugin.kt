@@ -224,7 +224,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       }
       audioFrameObserver = true;
       val registerAudioFrameObserver = rtcEngine?.registerAudioFrameObserver(mAudioFrameObserver)
-      Log.d("charco","registerAudioFrameObserver $registerAudioFrameObserver $rtcEngine")
+//      Log.d("charco","registerAudioFrameObserver $registerAudioFrameObserver $rtcEngine")
     }
 
     override fun onRtcEngineDestroyed() {}
@@ -249,22 +249,22 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
     }
 
     override fun onPlaybackFrame(audioFrame: AudioFrame?): Boolean {
-      Log.e("charco","onPlaybackFrame")
+//      Log.e("charco","onPlaybackFrame")
       return false
     }
 
     override fun onPlaybackFrameBeforeMixing(audioFrame: AudioFrame?, uid: Int): Boolean {
-      Log.e("charco","onPlaybackFrameBeforeMixing")
+//      Log.e("charco","onPlaybackFrameBeforeMixing")
       return false
     }
 
     override fun onMixedFrame(audioFrame: AudioFrame?): Boolean {
-      Log.e("charco","onMixedFrame")
+//      Log.e("charco","onMixedFrame")
       return false
     }
 
     override fun isMultipleChannelFrameWanted(): Boolean {
-      Log.e("charco","isMultipleChannelFrameWanted")
+//      Log.e("charco","isMultipleChannelFrameWanted")
       return false
     }
 
@@ -273,7 +273,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       uid: Int,
       channelId: String?
     ): Boolean {
-      Log.e("charco","onPlaybackFrameBeforeMixingEx")
+//      Log.e("charco","onPlaybackFrameBeforeMixingEx")
       return false
     }
 
@@ -282,17 +282,17 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
     }
 
     override fun getRecordAudioParams(): AudioParams {
-      Log.e("charco","getRecordAudioParams")
+//      Log.e("charco","getRecordAudioParams")
       return AudioParams(32000,1,0,1024)
     }
 
     override fun getPlaybackAudioParams(): AudioParams {
-      Log.e("charco","getPlaybackAudioParams")
+//      Log.e("charco","getPlaybackAudioParams")
       return AudioParams(32000,1,0,1024)
     }
 
     override fun getMixedAudioParams(): AudioParams {
-      Log.e("charco","getMixedAudioParams")
+//      Log.e("charco","getMixedAudioParams")
       return AudioParams(32000,1,0,1024)
     }
 
