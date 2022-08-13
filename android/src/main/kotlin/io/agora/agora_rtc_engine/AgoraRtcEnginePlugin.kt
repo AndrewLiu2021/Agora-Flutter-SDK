@@ -210,7 +210,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   var audioFrameObserver = false
   private val listener = object : EncoderListener {
     override fun encodeAAC(data: List<Any>) {
-//      Log.d("charco","encodeAAC ${data.size}")
+      Log.d("charco","encodeAAC ${data.size}")
       handler.post {
         eventSink?.success(mapOf("methodName" to "RecordFrameEvent", "data" to data))
       }
@@ -219,10 +219,6 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
 
   private  val _etcEnginePlugin : RtcEnginePlugin  =  object : RtcEnginePlugin {
     override fun onRtcEngineCreated(rtcEngine: RtcEngine?) {
-      if(audioFrameObserver){
-        return
-      }
-      audioFrameObserver = true;
       val registerAudioFrameObserver = rtcEngine?.registerAudioFrameObserver(mAudioFrameObserver)
 //      Log.d("charco","registerAudioFrameObserver $registerAudioFrameObserver $rtcEngine")
     }
@@ -234,6 +230,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   private val mAudioFrameObserver: IAudioFrameObserver = object : IAudioFrameObserver {
 
     override fun onRecordFrame(audioFrame: AudioFrame?): Boolean {
+//      Log.d("charco","onRecordFrame $_openEncodeData")
       if( _openEncodeData &&  audioFrame != null){
         val byteArray = bytebuffer2ByteArray(audioFrame.samples)
         AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
@@ -351,8 +348,11 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       }
       "openEncodeData" ->{
         val boolean = call.argument<Boolean>("openEncodeData")
-        if(boolean != null)
+        if(boolean != null){
           _openEncodeData = boolean
+          Log.d("charco","_openEncodeData $_openEncodeData ");
+        }
+
         return
       }
       else -> {
