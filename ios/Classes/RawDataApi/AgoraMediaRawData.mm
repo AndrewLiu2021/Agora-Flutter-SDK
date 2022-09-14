@@ -9,15 +9,15 @@
 #import "AgoraMediaRawData.h"
 #import <Flutter/Flutter.h>
 
-#import <objc/runtime.h>
-#if __has_include(<agora_rtc_engine/agora_rtc_engine-Swift.h>)
-#import <agora_rtc_engine/agora_rtc_engine-Swift.h>
-#else
+//#import <objc/runtime.h>
+//#if __has_include(<agora_rtc_engine/agora_rtc_engine-Swift.h>)
+//#import <agora_rtc_engine/agora_rtc_engine-Swift.h>
+//#else
 // Support project import fallback if the generated compatibility header
 // is not copied when this plugin is created as a library.
 // https://forums.swift.org/t/swift-static-libraries-dont-copy-generated-objective-c-header/19816
-#import "agora_rtc_engine-Swift.h"
-#endif
+//#import "agora_rtc_engine-Swift.h"
+//#endif
 
 @implementation AgoraVideoRawDataFormatter
 - (instancetype)init {
@@ -39,7 +39,7 @@
 -(NSArray *)toFlutterRawDataWithIsPlayback:(BOOL)isPlayback encoder:(YJAudioEncoder*)encoder {
     NSData *data = [NSData dataWithBytes: _buffer length: _bufferSize];
     if (isPlayback) {
-        
+
     }else {
         data = [encoder convertAudioFrameData:data];
     }
