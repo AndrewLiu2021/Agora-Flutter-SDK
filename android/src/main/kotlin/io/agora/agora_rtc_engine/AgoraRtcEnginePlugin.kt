@@ -210,7 +210,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   var audioFrameObserver = false
   private val listener = object : EncoderListener {
     override fun encodeAAC(data: List<Any>) {
-//      Log.d("charco","encodeAAC ${data.size}")
+      Log.d("charco","encodeAAC ${data.size}")
       handler.post {
         eventSink?.success(mapOf("methodName" to "RecordFrameEvent", "data" to data))
       }
@@ -219,12 +219,8 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
 
   private  val _etcEnginePlugin : RtcEnginePlugin  =  object : RtcEnginePlugin {
     override fun onRtcEngineCreated(rtcEngine: RtcEngine?) {
-      if(audioFrameObserver){
-        return
-      }
-      audioFrameObserver = true;
       val registerAudioFrameObserver = rtcEngine?.registerAudioFrameObserver(mAudioFrameObserver)
-      Log.d("charco","registerAudioFrameObserver $registerAudioFrameObserver $rtcEngine")
+//      Log.d("charco","registerAudioFrameObserver $registerAudioFrameObserver $rtcEngine")
     }
 
     override fun onRtcEngineDestroyed() {}
@@ -234,6 +230,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
   private val mAudioFrameObserver: IAudioFrameObserver = object : IAudioFrameObserver {
 
     override fun onRecordFrame(audioFrame: AudioFrame?): Boolean {
+//      Log.d("charco","onRecordFrame $_openEncodeData")
       if( _openEncodeData &&  audioFrame != null){
         val byteArray = bytebuffer2ByteArray(audioFrame.samples)
         AudioRecordUtil.encodeData(byteArray, audioFrame.numOfSamples, audioFrame.bytesPerSample, audioFrame.channels, audioFrame.samplesPerSec, listener)
@@ -249,22 +246,22 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
     }
 
     override fun onPlaybackFrame(audioFrame: AudioFrame?): Boolean {
-      Log.e("charco","onPlaybackFrame")
+//      Log.e("charco","onPlaybackFrame")
       return false
     }
 
     override fun onPlaybackFrameBeforeMixing(audioFrame: AudioFrame?, uid: Int): Boolean {
-      Log.e("charco","onPlaybackFrameBeforeMixing")
+//      Log.e("charco","onPlaybackFrameBeforeMixing")
       return false
     }
 
     override fun onMixedFrame(audioFrame: AudioFrame?): Boolean {
-      Log.e("charco","onMixedFrame")
+//      Log.e("charco","onMixedFrame")
       return false
     }
 
     override fun isMultipleChannelFrameWanted(): Boolean {
-      Log.e("charco","isMultipleChannelFrameWanted")
+//      Log.e("charco","isMultipleChannelFrameWanted")
       return false
     }
 
@@ -273,7 +270,7 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       uid: Int,
       channelId: String?
     ): Boolean {
-      Log.e("charco","onPlaybackFrameBeforeMixingEx")
+//      Log.e("charco","onPlaybackFrameBeforeMixingEx")
       return false
     }
 
@@ -282,17 +279,17 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
     }
 
     override fun getRecordAudioParams(): AudioParams {
-      Log.e("charco","getRecordAudioParams")
+//      Log.e("charco","getRecordAudioParams")
       return AudioParams(32000,1,0,1024)
     }
 
     override fun getPlaybackAudioParams(): AudioParams {
-      Log.e("charco","getPlaybackAudioParams")
+//      Log.e("charco","getPlaybackAudioParams")
       return AudioParams(32000,1,0,1024)
     }
 
     override fun getMixedAudioParams(): AudioParams {
-      Log.e("charco","getMixedAudioParams")
+//      Log.e("charco","getMixedAudioParams")
       return AudioParams(32000,1,0,1024)
     }
 
@@ -351,8 +348,11 @@ class AgoraRtcEnginePlugin : FlutterPlugin, MethodCallHandler, EventChannel.Stre
       }
       "openEncodeData" ->{
         val boolean = call.argument<Boolean>("openEncodeData")
-        if(boolean != null)
+        if(boolean != null){
           _openEncodeData = boolean
+          Log.d("charco","_openEncodeData $_openEncodeData ");
+        }
+
         return
       }
       else -> {
